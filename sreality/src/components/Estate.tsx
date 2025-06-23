@@ -1,7 +1,7 @@
 const IMAGE_WIDTH = 400
 const IMAGE_HEIGHT = 300
 import { replaceSizePlaceholders } from '@/utils/replaceSizePlaceholders';
-
+import { formatPrice } from '@/utils/formatPrice';
 
 const Estate = ({ estate } : { estate: any }) => {
     const imageUrl = replaceSizePlaceholders(estate._links.dynamicDown[0].href, IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -25,10 +25,10 @@ const Estate = ({ estate } : { estate: any }) => {
                 />
             </div>
             <div className="p-4 flex flex-col gap-2 flex-1">
-                <h1 className="text-2xl font-bold text-gray-800 text-center truncate" title={estate.name}>{estate.name}</h1>
+                <h1 className="text-2xl font-bold text-gray-800 truncate" title={estate.name}>{estate.name}</h1>
                 <div className="flex flex-col gap-1 text-gray-600">
                     <span className="text-lg font-medium">{estate.locality}</span>
-                    <span className="text-lg">{estate.price} Kč</span>
+                    <span className="text-lg">{formatPrice(estate.price)} Kč</span>
                 </div>
                 <div className="flex flex-col flex-1 justify-end">
                     <p className="text-gray-700 text-sm line-clamp-3">{estate.description}</p>
