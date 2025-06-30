@@ -2,9 +2,11 @@
 
 import { useParams } from 'next/navigation'
 import useFetch from '@/hooks/useFetch';
-import ImageGalery from '../../components/ImageGalery';
+import ImageGalery from '@/components/ImageGalery';
 import { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation'
+import { formatPrice } from '@/utils/formatPrice';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const page = () => {
     const { hash } = useParams()
@@ -12,6 +14,7 @@ const page = () => {
     const [images, setImages] = useState<string[]>([])
     const [isAvalibleToBeShown, setIsAvalibleToBeShown] = useState<boolean>(true)
     const isObject = data && typeof data === "object" && !Array.isArray(data)
+    const { theme } = useTheme()
 
     console.log(data)
 
@@ -34,7 +37,7 @@ const page = () => {
         <>
             {isObject && isAvalibleToBeShown && !isLoading && (
                 <>
-                <div className="flex flex-col xl:flex-row m-5 h-3/4">
+                <div className={`flex flex-col xl:flex-row m-5 h-3/4 ${theme === "dark" ? "text-white" : "text-black"}`}>
                     {images.length > 0 && (
                         <div className="flex-1 flex justify-start rounded-2xl h-full">
                             <ImageGalery images={images} />
@@ -47,6 +50,9 @@ const page = () => {
                                 __html: String(data?.text?.value || "")
                             }}
                         />
+                        <div className="mt-auto mb-2">
+                            <h1 className="text-2xl">Cena: {formatPrice(data?.price_czk.value_raw)} Kč</h1>
+                        </div>
                     </div>
                     
                 </div>
