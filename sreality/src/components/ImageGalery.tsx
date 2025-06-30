@@ -15,7 +15,7 @@ const ImageGalery = ({ images }: { images: string[] }) => {
                 <button
                     onClick={goPrev}
                     disabled={images.length <= 1}
-                    className="cursor-pointer absolute left-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-white/80 hover:bg-white/90 dark:bg-gray-800/80 dark:hover:bg-gray-800/90 disabled:opacity-50 rounded-full text-gray-900 dark:text-white z-10 shadow"
+                    className="h-8 w-8 items-center justify-center flex cursor-pointer absolute left-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-white/80 hover:bg-white/90 dark:bg-gray-800/80 dark:hover:bg-gray-800/90 disabled:opacity-50 rounded-full text-gray-900 dark:text-white z-10 shadow"
                 >
                 {"<"}
                 </button>
@@ -27,7 +27,7 @@ const ImageGalery = ({ images }: { images: string[] }) => {
                 <button
                     onClick={goNext}
                     disabled={images.length <= 1}
-                    className="cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-white/80 hover:bg-white/90 dark:bg-gray-800/80 dark:hover:bg-gray-800/90 disabled:opacity-50 rounded-full text-gray-900 dark:text-white z-10 shadow"
+                    className="h-8 w-8 items-center justify-center flex cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white/90 dark:bg-gray-800/80 dark:hover:bg-gray-800/90 disabled:opacity-50 rounded-full text-gray-900 dark:text-white z-10 shadow"
                 >
                 {">"}
                 </button>

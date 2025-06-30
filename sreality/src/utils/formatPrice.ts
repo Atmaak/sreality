@@ -1,3 +1,7 @@
 export const formatPrice = (price: number) => {
-    return price.toLocaleString('cs-CZ');
+    try {
+        return price.toLocaleString('cs-CZ')
+    } catch (error) {
+        return price
+    }
 }
