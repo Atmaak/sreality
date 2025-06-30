@@ -6,6 +6,10 @@ import { useState, useEffect, useRef } from 'react';
 
 const SortingTypes = [
     {
+        "text": "Default",
+        "value": "default"
+    },
+    {
         "text": "Price Ascending",
         "value": "PriceAsc"
     },
@@ -16,11 +20,11 @@ const SortingTypes = [
 ]
 
 const Estates = () => {
-    const { data, isLoading, err, fetchData } = useFetch("https://www.sreality.cz/api/cs/v2/estates")
     const [allData, setAllData] = useState<any[]>([])
     const [currentPage, setCurrentPage] = useState<number>(1)
-    const [sortingType, setSortingType] = useState<string>("PriceAsc")
+    const [sortingType, setSortingType] = useState<string>("default")
     const [currentItems, setCurrentItems] = useState<any[]>([])
+    const { data, isLoading, err, fetchData } = useFetch(`https://www.sreality.cz/api/cs/v2/estates?per_page=100&page=${currentPage + 1}`)
 
     const searchBar = useRef<HTMLInputElement>(null)
 
@@ -41,6 +45,7 @@ const Estates = () => {
 
     useEffect(() => {
         setCurrentItems(allData.slice(startIndex, endIndex))
+        sortCurrentPageItems(sortingType)
     }, [currentPage])
 
     useEffect(() => {
@@ -53,7 +58,6 @@ const Estates = () => {
     }, [sortingType])
     
     const fetchMoreItems = async () => {
-        console.log(totalPages !== currentPage)
         if(totalPages !== currentPage) return
         
         await fetchData()
@@ -92,7 +96,7 @@ const Estates = () => {
                 }
             })
         })
-    }
+    };
 
     const handleSearch = () => {
         const searchedTerm = searchBar?.current?.value
@@ -104,35 +108,39 @@ const Estates = () => {
             .filter(item => item.name && item.name.toLowerCase().includes(searchedTerm.toLowerCase()))
             .slice(startIndex, endIndex)
         setCurrentItems(arr)
-        console.log(arr)
         sortCurrentPageItems(sortingType)
-    }
+    };
 
     return (
-        <>
-            <div className="flex flex-row items-center justify-between mt-5">
+        <main>
+            <div className="flex flex-row items-center justify-between mt-5" role="navigation" aria-label="Estate controls">
                 <div className="flex justify-around items-center w-1/3">
                     <button 
                         className="cursor-pointer p-2 bg-amber-500 rounded-2xl text-black text-xl disabled:bg-gray-300 disabled:cursor-not-allowed" 
                         onClick={handlePreviousPage}
                         disabled={currentPage === 1}
+                        aria-label="Go to previous page"
                     >
                         Previous
                     </button>
-                    <span className="text-lg">
+                    <span className="text-lg" aria-live="polite">
                         Page {currentPage} of &infin;
                     </span>
                     <button 
                         className="cursor-pointer p-2 bg-amber-500 rounded-2xl text-black text-xl disabled:bg-gray-300 disabled:cursor-not-allowed" 
                         onClick={handleNextPage}
+                        aria-label="Go to next page"
                     >
                         Next
                     </button>
                 </div>
                 <div className="flex w-1/3 justify-center items-center">
+                    <label htmlFor="sort-select" className="sr-only">Sort estates</label>
                     <select
+                        id="sort-select"
                         onChange={(e) => setSortingType(e.target.value)}
                         className="p-2 bg-white dark:bg-sky-200 border border-gray-300 dark:border-gray-600 rounded-lg text-black cursor-pointer"
+                        aria-label="Sort estates"
                     >
                         {SortingTypes.map((item, index) => (
                             <option value={item.value} key={index} className="text-black dark:text-black bg-white dark:bg-sky-200">
@@ -142,21 +150,24 @@ const Estates = () => {
                     </select>
                 </div>
                 <div className="w-1/3 px-5">
+                    <label htmlFor="search-input" className="sr-only">Search estates</label>
                     <input 
+                        id="search-input"
                         type="search" 
                         placeholder="Search estates..."
                         className="w-7/10 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                         onChange={handleSearch}
                         ref={searchBar}
+                        aria-label="Search estates"
                     />
                 </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-10 justify-center p-10" >
-                {currentItems && currentItems.map((item: any, index: number) => (
+            <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-10 justify-center p-10" aria-label="Estate listings">
+                {currentItems.map((item: any, index: number) => (
                     <Estate key={index} estate={item} />
                 ))}
-            </div>
-        </>
+            </section>
+        </main>
     )
 }
 

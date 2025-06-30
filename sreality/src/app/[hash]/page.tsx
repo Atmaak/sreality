@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation'
 import { formatPrice } from '@/utils/formatPrice';
 import { useTheme } from '../../contexts/ThemeContext';
 
-const page = () => {
+const PropertyDetail = () => {
     const { hash } = useParams()
     const { data, isLoading, err } : { data: any, isLoading: boolean, err: any } = useFetch(`https://www.sreality.cz/api/cs/v2/estates/${hash}`)
     const [images, setImages] = useState<string[]>([])
@@ -69,4 +69,4 @@ const page = () => {
     )
 }
 
-export default page
+export default PropertyDetail;
