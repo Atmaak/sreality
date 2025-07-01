@@ -174,13 +174,13 @@ const Estates = () => {
 
     return (
         <main>
-            <div className="flex flex-row items-center justify-between mt-5 wrap-anywhere" role="navigation" aria-label="Estate controls">
-                <div className="flex w-1/3 justify-center items-center">
+            <div className="flex flex-col sm:flex-row items-center justify-between mt-5 wrap-anywhere gap-4" role="navigation" aria-label="Estate controls">
+                <div className="flex w-full sm:w-1/3 justify-center items-center">
                     <label htmlFor="sort-select" className="sr-only">Sort estates</label>
                     <select
                         id="sort-select"
                         onChange={(e) => setSortingType(JSON.parse(e.target.value))}
-                        className="p-2 bg-white dark:bg-sky-200 border border-gray-300 dark:border-gray-600 rounded-lg text-black cursor-pointer"
+                        className="p-2 bg-white dark:bg-sky-200 border border-gray-300 dark:border-gray-600 rounded-lg text-black cursor-pointer w-full max-w-xs"
                         aria-label="Sort estates"
                     >
                         {SortingTypes.map((item, index) => (
@@ -190,13 +190,13 @@ const Estates = () => {
                         ))}
                     </select>
                 </div>
-                <div className="flex w-1/3 justify-center items-center">
-                    <label htmlFor="sort-select" className="sr-only">Sort estates</label>
+                <div className="flex w-full sm:w-1/3 justify-center items-center">
+                    <label htmlFor="category-select" className="sr-only">Filter by category</label>
                     <select
-                        id="sort-select"
+                        id="category-select"
                         onChange={(e) => setCategory(JSON.parse(e.target.value))}
-                        className="p-2 bg-white dark:bg-sky-200 border border-gray-300 dark:border-gray-600 rounded-lg text-black cursor-pointer"
-                        aria-label="Sort estates"
+                        className="p-2 bg-white dark:bg-sky-200 border border-gray-300 dark:border-gray-600 rounded-lg text-black cursor-pointer w-full max-w-xs"
+                        aria-label="Filter by category"
                     >
                         {Categories.map((item, index) => (
                             <option value={JSON.stringify(item)} key={index} className="text-black dark:text-black bg-white dark:bg-sky-200">
@@ -205,13 +205,13 @@ const Estates = () => {
                         ))}
                     </select>
                 </div>
-                <div className="w-1/3 px-5">
+                <div className="w-full sm:w-1/3 px-0 sm:px-5">
                     <label htmlFor="search-input" className="sr-only">Search estates</label>
                     <input 
                         id="search-input"
                         type="search" 
                         placeholder="Search estates..."
-                        className="w-7/10 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                        className="w-full max-w-xs mx-auto block p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                         onChange={handleSearch}
                         ref={searchBar}
                         aria-label="Search estates"
