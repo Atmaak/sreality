@@ -4,10 +4,20 @@ import useFetch from "@/hooks/useFetch"
 import Estate from "@/components/Estate"
 import { useState, useEffect, useRef } from 'react';
 
+type SortingType = {
+    text: string,
+    value: string
+}
+
+type Category = {
+    category: number,
+    text: string
+}
+
 const SortingTypes = [
     {
-        "text": "Default",
-        "value": "default"
+        "text": "Base Sorting",
+        "value": "Default"
     },
     {
         "text": "Price Ascending",
@@ -19,17 +29,46 @@ const SortingTypes = [
     }
 ]
 
+const Categories = [
+    {
+        category: 0,
+        text: "Default Category"
+    },
+    {
+        category: 1,
+        text: "Byt"
+    },
+    {
+        category: 2,
+        text: "Barák"
+    },
+    {
+        category: 3,
+        text: "Pozemek"
+    },
+    {
+        category: 4,
+        text: "Nebytelné"
+    },
+    {
+        category: 5,
+        text: "Obytné vozy"
+    },
+]
+
 const Estates = () => {
     const [allData, setAllData] = useState<any[]>([])
     const [currentPage, setCurrentPage] = useState<number>(1)
-    const [sortingType, setSortingType] = useState<string>("default")
+    const [sortingType, setSortingType] = useState<SortingType>(SortingTypes[0])
     const [currentItems, setCurrentItems] = useState<any[]>([])
-    const { data, isLoading, err, fetchData } = useFetch(`https://www.sreality.cz/api/cs/v2/estates?per_page=100&page=${currentPage + 1}`)
+    const [category, setCategory] = useState<Category>(Categories[0])
+    const [categorizedData, setCategorizedData] = useState<any[]>([])
+    const { data, isLoading, err, fetchData } = useFetch(`https://www.sreality.cz/api/cs/v2/estates?per_page=100&page=${currentPage + 1}`) //500 pro lepsi fungovani kayegorii
 
     const searchBar = useRef<HTMLInputElement>(null)
 
     const itemsPerPage = 20
-    const totalPages = Math.ceil(allData.length / itemsPerPage)
+    const totalPages = Math.ceil(categorizedData.length / itemsPerPage)
     const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
 
@@ -44,19 +83,37 @@ const Estates = () => {
     }, [isLoading])
 
     useEffect(() => {
-        setCurrentItems(allData.slice(startIndex, endIndex))
-        sortCurrentPageItems(sortingType)
-    }, [currentPage])
+        handleCategories()
+    }, [allData, category])
 
     useEffect(() => {
-        setCurrentItems(allData.slice(startIndex, endIndex))
-        sortCurrentPageItems(sortingType)
+        setCurrentItems(categorizedData.slice(startIndex, endIndex))
+        sortCurrentPageItems(sortingType.value)
+    }, [currentPage, categorizedData])
+
+    useEffect(() => {
+        setCurrentItems(categorizedData.slice(startIndex, endIndex))
+        sortCurrentPageItems(sortingType.value)
+        handleCategories()
     }, [isFirstLoad])
 
     useEffect(() => {
-        sortCurrentPageItems(sortingType)
+        sortCurrentPageItems(sortingType.value)
     }, [sortingType])
+
+    useEffect(() => {
+        handleCategories()
+        setCurrentPage(1)
+    }, [category])
     
+    const handleCategories = () => {
+        if(category.category === 0) {
+            setCategorizedData(allData)
+        } else {
+            setCategorizedData([...allData].filter(item => item.category === category.category))
+        }
+    }
+
     const fetchMoreItems = async () => {
         if(totalPages !== currentPage) return
         
@@ -108,42 +165,41 @@ const Estates = () => {
             .filter(item => item.name && item.name.toLowerCase().includes(searchedTerm.toLowerCase()))
             .slice(startIndex, endIndex)
         setCurrentItems(arr)
-        sortCurrentPageItems(sortingType)
+        sortCurrentPageItems(sortingType.value)
     };
+
+    if (isFirstLoad && isLoading) {
+        return <Loader />;
+    }
 
     return (
         <main>
-            <div className="flex flex-row items-center justify-between mt-5" role="navigation" aria-label="Estate controls">
-                <div className="flex justify-around items-center w-1/3">
-                    <button 
-                        className="cursor-pointer p-2 bg-amber-500 rounded-2xl text-black text-xl disabled:bg-gray-300 disabled:cursor-not-allowed" 
-                        onClick={handlePreviousPage}
-                        disabled={currentPage === 1}
-                        aria-label="Go to previous page"
+            <div className="flex flex-row items-center justify-between mt-5 wrap-anywhere" role="navigation" aria-label="Estate controls">
+                <div className="flex w-1/3 justify-center items-center">
+                    <label htmlFor="sort-select" className="sr-only">Sort estates</label>
+                    <select
+                        id="sort-select"
+                        onChange={(e) => setSortingType(JSON.parse(e.target.value))}
+                        className="p-2 bg-white dark:bg-sky-200 border border-gray-300 dark:border-gray-600 rounded-lg text-black cursor-pointer"
+                        aria-label="Sort estates"
                     >
-                        Previous
-                    </button>
-                    <span className="text-lg" aria-live="polite">
-                        Page {currentPage} of &infin;
-                    </span>
-                    <button 
-                        className="cursor-pointer p-2 bg-amber-500 rounded-2xl text-black text-xl disabled:bg-gray-300 disabled:cursor-not-allowed" 
-                        onClick={handleNextPage}
-                        aria-label="Go to next page"
-                    >
-                        Next
-                    </button>
+                        {SortingTypes.map((item, index) => (
+                            <option value={JSON.stringify(item)} key={index} className="text-black dark:text-black bg-white dark:bg-sky-200">
+                                {item.text}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="flex w-1/3 justify-center items-center">
                     <label htmlFor="sort-select" className="sr-only">Sort estates</label>
                     <select
                         id="sort-select"
-                        onChange={(e) => setSortingType(e.target.value)}
+                        onChange={(e) => setCategory(JSON.parse(e.target.value))}
                         className="p-2 bg-white dark:bg-sky-200 border border-gray-300 dark:border-gray-600 rounded-lg text-black cursor-pointer"
                         aria-label="Sort estates"
                     >
-                        {SortingTypes.map((item, index) => (
-                            <option value={item.value} key={index} className="text-black dark:text-black bg-white dark:bg-sky-200">
+                        {Categories.map((item, index) => (
+                            <option value={JSON.stringify(item)} key={index} className="text-black dark:text-black bg-white dark:bg-sky-200">
                                 {item.text}
                             </option>
                         ))}
@@ -162,13 +218,44 @@ const Estates = () => {
                     />
                 </div>
             </div>
+            <div className="flex justify-center w-full"><div className="flex justify-around items-center w-1/2">
+                    <button 
+                        className="cursor-pointer p-2 bg-amber-500 rounded-2xl text-black text-xl disabled:bg-gray-300 disabled:cursor-not-allowed" 
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        aria-label="Go to previous page"
+                    >
+                        Previous
+                    </button>
+                    <span className="text-lg" aria-live="polite">
+                        Page {currentPage} of &infin;
+                    </span>
+                    <button 
+                        className="cursor-pointer p-2 bg-amber-500 rounded-2xl text-black text-xl disabled:bg-gray-300 disabled:cursor-not-allowed" 
+                        onClick={handleNextPage}
+                        aria-label="Go to next page"
+                    >
+                        Next
+                    </button>
+            </div></div>
             <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-10 justify-center p-10" aria-label="Estate listings">
+                {isLoading && !isFirstLoad && (
+                    <div className="col-span-full flex justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+                    </div>
+                )}
                 {currentItems.map((item: any, index: number) => (
                     <Estate key={index} estate={item} />
                 ))}
             </section>
         </main>
-    )
+    );
 }
+
+const Loader = () => (
+    <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-500"></div>
+    </div>
+);
 
 export default Estates

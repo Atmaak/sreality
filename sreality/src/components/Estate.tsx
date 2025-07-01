@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { replaceSizePlaceholders } from '@/utils/replaceSizePlaceholders';
@@ -11,17 +11,21 @@ const IMAGE_HEIGHT = 300
 const Estate = ({ estate } : { estate: any }) => {
     const imageUrl = replaceSizePlaceholders(estate._links.dynamicDown[0].href, IMAGE_WIDTH, IMAGE_HEIGHT);
     const { theme } = useTheme();
+    const [isImageLoading, setIsImageLoading] = useState(true);
     
     return (
             <article className={`${theme === 'dark' ? 'bg-gray-800 shadow-gray-900/50 hover:shadow-gray-900/70' : 'bg-sky-200 shadow-lg hover:shadow-2xl'} rounded-2xl overflow-hidden flex flex-col transition-all hover:scale-105 duration-300`}>
                 <div className="relative w-full aspect-[4/3]">
                     <Image
+                        key={imageUrl}
                         src={imageUrl}
                         alt={`${estate.name} - ${estate.locality}`}
                         fill
-                        className="object-cover"
+                        className={`object-cover transition-all duration-300 ${isImageLoading ? 'blur-sm' : 'blur-0'}`}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                         loading="lazy"
+                        onLoad={() => setIsImageLoading(false)}
+                        onLoadStart={() => setIsImageLoading(true)}
                     />
                 </div>
                 <div className="p-4 flex flex-col gap-2 flex-1">
