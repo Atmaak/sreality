@@ -1,21 +1,21 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Header from '@/components/Header';
-import { ThemeProvider } from '@/contexts/ThemeContext';
-import ThemeWrapper from '@/components/ThemeWrapper';
+import type { Metadata } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+import "./globals.css"
+import Header from '@/components/Header'
+import { ThemeProvider } from '@/contexts/ThemeContext'
+import ThemeWrapper from '@/components/ThemeWrapper'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   display: 'swap',
-});
+})
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: 'swap',
-});
+})
 
 export const metadata: Metadata = {
   title: "SReality - Find Your Perfect Property | Real Estate Platform",
@@ -69,12 +69,12 @@ export const metadata: Metadata = {
   verification: {
     google: 'your-google-verification-code',
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <ThemeProvider>
@@ -95,5 +95,5 @@ export default function RootLayout({
         </body>
       </html>
     </ThemeProvider>
-  );
+  )
 }
